@@ -1,14 +1,22 @@
+import pandas as pd
 import numpy as np
-import matplotlib.pyplot  as plt
-spread = 100*np.random.rand(100)
-center = np.ones(50)*50
-print(spread)
-print(center)
-flier_high = 100*np.random.rand(10)+100
-flier_low = -100*np.random.rand(100)
-print(flier_high)
-print(flier_low)
-data = np.concatenate((spread,center,flier_high,flier_low))
+import featuretools as ft
 
-plt.boxplot(data,sym='gx',widths=.75,notch=True)
-plt.show()
+# CSV 파일의 URL (GitHub raw 버전 링크 사용)
+url = "https://raw.githubusercontent.com/WillKoehrsen/automated-feature-engineering/master/walk_through/data/loans.csv"
+
+# CSV 파일을 데이터프레임으로 읽기
+loans = pd.read_csv(url)
+
+loans['loan_start'] = pd.to_datetime(loans['loan_start'], format='%Y-%m-%d')
+loans['loan_end'] = pd.to_datetime(loans['loan_end'], format='%Y-%m-%d')
+loansDf = pd.DataFrame(loans)
+
+# Create new entityset
+es = ft.EntitySet(id='clients')
+print(loansDf.head())
+print(loansDf.dtypes)
+# clients DataFrame을 Entity로 변환하여 EntitySet에 추가
+#es.add_dataframe(dataframe_name='clients', dataframe=loansDf, index='loan_id',time_index="loan_start")
+
+print(es)
